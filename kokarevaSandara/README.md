@@ -38,3 +38,11 @@ UI: число по центру; кнопки Increment / Decrement / Reset.
 - Сделал Welcome-экран
 - Подключил Bottom Tabs: Home / Labs / About
 - Чем пользовался (ИИ / сам): сам
+
+## Пара 3
+
+- [x] Лаба useState: CounterScreen в Tabs (`SPECS/lab-usestate.md`)
+- [x] Controlled TextInput (`SPECS/lab-textinput.md`)
+- [x] Лаба useEffect: таймер / фейк-список (`SPECS/lab-useeffect.md`)
+- [x] Просмотр списка постов (`SPECS/lab-posts.md`)
+- [x] Просмотр одного поста (`SPECS/lab-post-view.md`)
