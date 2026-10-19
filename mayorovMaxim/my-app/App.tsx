@@ -9,6 +9,7 @@ import TimerTab from './screens/TimerTab';
 import FakeLoadTab from './screens/FakeLoadTab';
 import PostsTab from './screens/PostsTab';
 import PostViewTab from './screens/PostViewTab';
+import PostFormTab from './screens/PostFormTab';
 import PlaceholderTab from './screens/PlaceholderTab';
 
 const Tab = createBottomTabNavigator();
@@ -27,6 +28,16 @@ function PostsStack() {
         component={PostViewTab}
         options={{ title: 'Пост' }}
       />
+      <Stack.Screen
+        name="PostCreate"
+        component={PostFormTab}
+        options={{ title: 'Новый пост' }}
+      />
+      <Stack.Screen
+        name="PostEdit"
+        component={PostFormTab}
+        options={{ title: 'Редактировать' }}
+      />
     </Stack.Navigator>
   );
 }
@@ -40,7 +51,8 @@ export default function App() {
         <Tab.Screen name="Name" component={NameTab} />
         <Tab.Screen name="Timer" component={TimerTab} />
         <Tab.Screen name="Load" component={FakeLoadTab} />
-        <Tab.Screen name="Posts" component={PostsTab} options={{ headerShown: false }}/>
+        <Tab.Screen name="Posts" component={PostsStack} options={{ headerShown: false }}
+        />
         <Tab.Screen name="About" component={PlaceholderTab} />
       </Tab.Navigator>
     </NavigationContainer>
