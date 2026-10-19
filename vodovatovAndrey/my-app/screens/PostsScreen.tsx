@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   View,
   Text,
@@ -32,9 +33,11 @@ export default function PostsScreen() {
     }
   }
 
-  useEffect(() => {
-    loadPosts();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadPosts();
+    }, []),
+  );
 
   if (loading) {
     return (
@@ -60,7 +63,12 @@ export default function PostsScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Список постов</Text>
-
+      <Pressable
+        style={styles.createButton}
+        onPress={() => navigation.navigate("CreatePost")}
+      >
+        <Text style={styles.createButtonText}>+ Создать пост</Text>
+      </Pressable>
       <FlatList
         data={posts}
         keyExtractor={(item) => String(item.id)}
@@ -137,5 +145,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     color: "#171717",
+  },
+  createButton: {
+    backgroundColor: "#B8A1FF",
+    borderWidth: 3,
+    borderColor: "#111111",
+    borderRadius: 10,
+    padding: 14,
+    alignItems: "center",
+    marginBottom: 15,
+  },
+
+  createButtonText: {
+    fontSize: 17,
+    fontWeight: "bold",
+    color: "#111111",
   },
 });
