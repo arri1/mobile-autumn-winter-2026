@@ -1,7 +1,9 @@
 {
   "expo": {
-    "name": "nikulinFedor",
+    "name": "Кампус СВФУ",
     "slug": "nikulinFedor",
+    "scheme": "campus-svfu",
+    "plugins": ["expo-router"],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
