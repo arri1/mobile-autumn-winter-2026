@@ -7,7 +7,7 @@ import ModelViewer from '../components/ModelViewer';
 import { buildings } from '../models';
 import { colors } from '../theme';
 
-export default function HomeScreen() {
+export default function CampusOverviewScreen() {
   const [building, setBuilding] = useState(buildings[0]);
 
   return (
