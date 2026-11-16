@@ -6,9 +6,10 @@ import {
   ActivityIndicator,
   Pressable,
   ScrollView,
+  Alert,
 } from "react-native";
 
-import { getPost, Post } from "../api";
+import { getPost, deletePost, Post } from "../api";
 
 export default function PostViewScreen({ route, navigation }: any) {
   const id = route.params.id as number;
@@ -71,6 +72,40 @@ export default function PostViewScreen({ route, navigation }: any) {
     );
   }
 
+  async function handleDelete() {
+    if (!post) {
+      return;
+    }
+
+    Alert.alert(
+      "Удаление поста",
+      "Ты действительно хочешь удалить этот пост?",
+      [
+        {
+          text: "Отмена",
+          style: "cancel",
+        },
+        {
+          text: "Удалить",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              setLoading(true);
+              setError("");
+
+              await deletePost(post.id);
+
+              navigation.goBack();
+            } catch (e) {
+              setLoading(false);
+              setError("Не удалось удалить пост");
+            }
+          },
+        },
+      ],
+    );
+  }
+
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>{post.title}</Text>
@@ -80,10 +115,34 @@ export default function PostViewScreen({ route, navigation }: any) {
       </Text>
 
       <Text style={styles.content}>{post.content}</Text>
-
-      <Pressable style={styles.button} onPress={() => navigation.goBack()}>
-        <Text style={styles.buttonText}>Назад</Text>
-      </Pressable>
+      <View style={styles.buttonContainer}>
+        <View style={styles.actionButtons}>
+          <Pressable
+            style={[styles.button, styles.editButton]}
+            onPress={() =>
+              navigation.navigate("EditPost", {
+                id: post.id,
+                title: post.title,
+                content: post.content,
+              })
+            }
+          >
+            <Text style={styles.buttonText}>Изменить</Text>
+          </Pressable>
+          <Pressable
+            style={[styles.button, styles.deleteButton]}
+            onPress={handleDelete}
+          >
+            <Text style={styles.buttonText}>Удалить</Text>
+          </Pressable>
+          <Pressable
+            style={[styles.button, styles.backButton]}
+            onPress={() => navigation.goBack()}
+          >
+            <Text style={styles.buttonText}>Назад</Text>
+          </Pressable>
+        </View>
+      </View>
     </ScrollView>
   );
 }
@@ -120,13 +179,12 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   button: {
-    alignSelf: "flex-start",
-    backgroundColor: "#FFD21F",
+    flex: 1,
     borderWidth: 3,
     borderColor: "#171717",
     borderRadius: 10,
     paddingVertical: 12,
-    paddingHorizontal: 20,
+    alignItems: "center",
   },
   buttonText: {
     fontSize: 16,
@@ -141,5 +199,29 @@ const styles = StyleSheet.create({
   message: {
     fontSize: 17,
     color: "#171717",
+  },
+  deleteButton: {
+    backgroundColor: "#FF7777",
+  },
+  buttonContainer: {
+    marginTop: "auto",
+    paddingTop: 20,
+  },
+  actionButtons: {
+    flexDirection: "row",
+    gap: 10,
+    marginBottom: 10,
+  },
+  editButton: {
+    backgroundColor: "#FFD21F",
+  },
+  backButton: {
+    width: "100%",
+    backgroundColor: "#B8A1FF",
+    borderWidth: 3,
+    borderColor: "#171717",
+    borderRadius: 10,
+    paddingVertical: 12,
+    alignItems: "center",
   },
 });

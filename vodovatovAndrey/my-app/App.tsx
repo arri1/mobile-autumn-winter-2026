@@ -10,6 +10,8 @@ import TextInputScreen from "./screens/TextInputScreen";
 import UseEffectScreen from "./screens/UseEffectScreen";
 import PostsScreen from "./screens/PostsScreen";
 import PostViewScreen from "./screens/PostViewScreen";
+import CreatePostScreen from "./screens/CreatePostScreen";
+import EditPostScreen from "./screens/EditPostScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -27,6 +29,18 @@ function PostsStack() {
         name="PostView"
         component={PostViewScreen}
         options={{ title: "Просмотр поста" }}
+      />
+
+      <Stack.Screen
+        name="CreatePost"
+        component={CreatePostScreen}
+        options={{ title: "Создание поста" }}
+      />
+
+      <Stack.Screen
+        name="EditPost"
+        component={EditPostScreen}
+        options={{ title: "Редактирование поста" }}
       />
     </Stack.Navigator>
   );
