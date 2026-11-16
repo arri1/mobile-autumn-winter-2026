@@ -19,6 +19,6 @@ export default function CampusScreen({ children }: { children: ReactNode }) {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
-  scrollContent: { paddingHorizontal: 16, paddingTop: 14, paddingBottom: 32 },
-  content: { alignSelf: 'center', width: '100%', maxWidth: 600, gap: 18 },
+  scrollContent: { paddingHorizontal: 20, paddingTop: 18, paddingBottom: 32 },
+  content: { alignSelf: 'center', width: '100%', maxWidth: 600, gap: 16 },
 });
