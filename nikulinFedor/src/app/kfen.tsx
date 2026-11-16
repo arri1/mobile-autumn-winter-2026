@@ -68,7 +68,7 @@ export default function KfenScreen() {
         accessibilityRole="button"
         onPress={() => {
           if (router.canGoBack()) router.back();
-          else router.replace('/');
+          else router.replace('/campus');
         }}
         style={({ pressed }) => [styles.back, pressed && styles.pressed]}
       >
