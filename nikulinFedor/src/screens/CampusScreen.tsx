@@ -13,10 +13,6 @@ export default function CampusOverviewScreen() {
   return (
     <CampusScreen>
       <View style={styles.header}>
-        <View style={styles.headerTop}>
-          <Text style={styles.eyebrow}>ЯКУТСК</Text>
-          <Text style={styles.headerBadge}>3D</Text>
-        </View>
         <Text accessibilityRole="header" style={styles.title}>Кампус СВФУ</Text>
         <Text style={styles.subtitle}>Учебные корпуса и планы этажей</Text>
       </View>
@@ -91,12 +87,9 @@ export default function CampusOverviewScreen() {
 }
 
 const styles = StyleSheet.create({
-  header: { gap: 5, padding: 18, borderRadius: 24, backgroundColor: '#123D33' },
-  headerTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 },
-  eyebrow: { color: '#C4E6D5', fontSize: 11, fontWeight: '800', letterSpacing: 1.6 },
-  headerBadge: { color: '#E3F5EB', borderColor: '#6A9F8B', borderWidth: 1, borderRadius: 7, paddingHorizontal: 7, paddingVertical: 3, fontSize: 11, fontWeight: '800' },
-  title: { color: '#F5FAF5', fontSize: 32, letterSpacing: -1.1, fontWeight: '800' },
-  subtitle: { color: '#CDE8DC', fontSize: 14, lineHeight: 20 },
+  header: { gap: 6, padding: 24, borderRadius: 26, backgroundColor: colors.forest },
+  title: { color: colors.paper, fontSize: 32, letterSpacing: -1.1, fontWeight: '800' },
+  subtitle: { color: colors.lightText, fontSize: 15, lineHeight: 21 },
   buildings: { flexDirection: 'row', gap: 8 },
   building: { flex: 1, minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, padding: 6, borderRadius: 14, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.paper },
   buildingSelected: { backgroundColor: colors.green, borderColor: colors.green },

@@ -25,7 +25,7 @@ function PostContent({ id }: { id: number }) {
     return (
       <View style={courseStyles.card}>
         <Text accessibilityRole="alert" style={courseStyles.text}>{result.message}</Text>
-        <Pressable accessibilityRole="button" onPress={retry} style={courseStyles.button}>
+        <Pressable accessibilityRole="button" onPress={() => retry()} style={courseStyles.button}>
           <Text style={courseStyles.buttonText}>Повторить</Text>
         </Pressable>
       </View>

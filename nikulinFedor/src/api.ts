@@ -34,7 +34,25 @@ export async function getPost(id: number, signal: AbortSignal): Promise<Post> {
   return data;
 }
 
+export async function createPost(title: string, content: string, signal: AbortSignal): Promise<Post> {
+  const response = await fetch(`${baseUrl}/posts`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title, content }),
+    signal,
+  });
+  if (response.status === 400) throw new Error('Сервер отклонил пост. Проверь заголовок и текст.');
+  if (!response.ok) throw new Error(`Сервер вернул ошибку ${response.status}. Проверь ленту перед повторной отправкой.`);
+
+  const post: unknown = await response.json().catch(() => null);
+  if (!isPost(post)) throw new Error('Сервер прислал неожиданный ответ. Проверь ленту перед повторной отправкой.');
+  return post;
+}
+
 export function formatPostDate(value: string) {
   const date = new Date(value);
-  return Number.isFinite(date.getTime()) ? date.toLocaleString('ru-RU') : 'Дата не указана';
+  if (!Number.isFinite(date.getTime())) return 'Дата не указана';
+  return date.toLocaleString('ru-RU', {
+    day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
+  });
 }
