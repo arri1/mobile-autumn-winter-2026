@@ -11,6 +11,7 @@ import AboutScreen from './screens/AboutScreen';
 import TimerScreen from './screens/TimerScreen';
 import PostsScreen from './screens/PostsScreen';
 import PostViewScreen from './screens/PostViewScreen';
+import PostFormScreen from './screens/PostFormScreen'
 
 import { Ionicons } from "@expo/vector-icons";
 
@@ -18,11 +19,13 @@ import { Ionicons } from "@expo/vector-icons";
 export type RootStackParamList = {
   PostsList: undefined; // Экран списка постов параметров не принимает
   PostView: { id: number }; // Экран просмотра требует обязательный id поста
+  PostForm: { id?: number } | undefined;
 };
 
 const Tab = createBottomTabNavigator();
 // Передаем типы в навигатор стека
 const Stack = createNativeStackNavigator<RootStackParamList>();
+
 
 // 2. Внутренний Стек-навигатор для вкладки "Посты"
 function PostsStack() {
@@ -37,6 +40,11 @@ function PostsStack() {
         name="PostView" 
         component={PostViewScreen} 
         options={{ title: 'Просмотр поста' }} 
+      />
+      <Stack.Screen 
+        name="PostForm" 
+        component={PostFormScreen} 
+        options={{ title: 'Редактирование' }} 
       />
     </Stack.Navigator>
   );
