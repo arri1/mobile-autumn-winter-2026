@@ -1,15 +1,6 @@
 import { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  Pressable,
-  StyleSheet,
-  TextInput,
-  Alert,
-  ScrollView,
-} from 'react-native';
-import { getPost, updatePost, Post } from '../src/api';
+import {View,Text,ActivityIndicator,Pressable,StyleSheet,TextInput,Alert,ScrollView} from 'react-native';
+import { getPost, updatePost, deletePost, Post } from '../src/api';
 
 export default function PostViewScreen({ route, navigation }: any) {
   const id = route.params.id as number;
@@ -17,11 +8,12 @@ export default function PostViewScreen({ route, navigation }: any) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Состояния для редактирования
+  // Состояния для редактирования и удаления
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState('');
   const [editContent, setEditContent] = useState('');
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -76,6 +68,31 @@ export default function PostViewScreen({ route, navigation }: any) {
     } finally {
       setSaving(false);
     }
+  }
+
+  function confirmDelete() {
+    if (!post) return;
+    Alert.alert(
+      'Удаление поста',
+      'Вы уверены, что хотите удалить этот пост?',
+      [
+        { text: 'Отмена', style: 'cancel' },
+        {
+          text: 'Удалить',
+          style: 'destructive',
+          onPress: async () => {
+            setDeleting(true);
+            try {
+              await deletePost(post.id);
+              navigation.goBack(); // Возвращаемся к списку, он обновится автоматически
+            } catch (e) {
+              Alert.alert('Ошибка', e instanceof Error ? e.message : 'Не удалось удалить пост');
+              setDeleting(false);
+            }
+          },
+        },
+      ]
+    );
   }
 
   if (loading) {
@@ -148,8 +165,16 @@ export default function PostViewScreen({ route, navigation }: any) {
       <Text style={styles.content}>{post.content}</Text>
 
       <View style={styles.footer}>
-        <Pressable style={styles.btn} onPress={startEditing}>
+        <Pressable style={styles.btn} onPress={startEditing} disabled={deleting}>
           <Text style={styles.btnText}>Редактировать</Text>
+        </Pressable>
+
+        <Pressable
+          style={[styles.btn, styles.deleteBtn]}
+          onPress={confirmDelete}
+          disabled={deleting}
+        >
+          <Text style={styles.btnText}>{deleting ? 'Удаление...' : 'Удалить'}</Text>
         </Pressable>
       </View>
     </ScrollView>
@@ -157,33 +182,34 @@ export default function PostViewScreen({ route, navigation }: any) {
 }
 
 const styles = StyleSheet.create({
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 },
-  container: { flexGrow: 1, padding: 16, gap: 12, backgroundColor: '#fff' },
-  title: { fontSize: 22, fontWeight: '700' },
-  date: { fontSize: 12, color: '#888' },
-  content: { fontSize: 16, lineHeight: 24, color: '#222' },
-  error: { color: '#c00', marginBottom: 12, textAlign: 'center' },
-  footer: { marginTop: 16, alignItems: 'flex-start' },
+    center: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 },
+    container: { flexGrow: 1, padding: 16, gap: 12, backgroundColor: '#fff' },
+    title: { fontSize: 22, fontWeight: '700' },
+    date: { fontSize: 12, color: '#888' },
+    content: { fontSize: 16, lineHeight: 24, color: '#222' },
+    error: { color: '#c00', marginBottom: 12, textAlign: 'center' },
+    footer: { flexDirection: 'row', gap: 10, marginTop: 16 },
 
-  // Стили формы редактирования
-  label: { fontSize: 14, fontWeight: '600', color: '#444' },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 10,
-    padding: 12,
-    fontSize: 16,
-  },
-  textArea: {
-    minHeight: 160,
-  },
-  actions: {
-    flexDirection: 'row',
-    gap: 10,
-    marginTop: 8,
-  },
-  btn: { backgroundColor: '#111', paddingHorizontal: 18, paddingVertical: 10, borderRadius: 10 },
-  btnText: { color: '#fff', fontWeight: '600' },
-  cancelBtn: { backgroundColor: '#e4e4e7' },
-  cancelBtnText: { color: '#111', fontWeight: '600' },
+    // Стили формы редактирования
+    label: { fontSize: 14, fontWeight: '600', color: '#444' },
+    input: {
+      borderWidth: 1,
+      borderColor: '#ddd',
+      borderRadius: 10,
+      padding: 12,
+      fontSize: 16,
+    },
+    textArea: {
+      minHeight: 160,
+    },
+    actions: {
+      flexDirection: 'row',
+      gap: 10,
+      marginTop: 8,
+    },
+    btn: { backgroundColor: '#111', paddingHorizontal: 18, paddingVertical: 10, borderRadius: 10 },
+    btnText: { color: '#fff', fontWeight: '600' },
+    cancelBtn: { backgroundColor: '#e4e4e7' },
+    cancelBtnText: { color: '#111', fontWeight: '600' },
+    deleteBtn: { backgroundColor: '#dc2626' },
 });

@@ -45,3 +45,10 @@ export async function updatePost(id: number, data: Partial<PostPayload>): Promis
   if (!res.ok) throw new Error(`Ошибка ${res.status}`);
   return res.json();
 }
+
+export async function deletePost(id: number): Promise<void> {
+  const res = await fetch(`${BASE_URL}/posts/${id}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) throw new Error(`Ошибка ${res.status}`);
+}
