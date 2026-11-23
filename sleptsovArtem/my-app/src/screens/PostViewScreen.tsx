@@ -1,12 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   View,
   Text,
   ActivityIndicator,
   Pressable,
+  Alert,
+  Platform,
   StyleSheet,
 } from 'react-native';
-import { getPost, Post } from '../api';
+import { useFocusEffect } from '@react-navigation/native';
+import { getPost, deletePost, Post } from '../api';
+
+function confirmDelete(onConfirm: () => void) {
+  if (Platform.OS === 'web') {
+    if ((globalThis as any).confirm('Удалить пост?')) onConfirm();
+    return;
+  }
+  Alert.alert('Удалить пост?', 'Это действие нельзя отменить.', [
+    { text: 'Отмена', style: 'cancel' },
+    { text: 'Удалить', style: 'destructive', onPress: onConfirm },
+  ]);
+}
 
 export default function PostViewScreen({ route, navigation }: any) {
   const id = route.params.id as number;
@@ -15,30 +29,48 @@ export default function PostViewScreen({ route, navigation }: any) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
+  const [deleting, setDeleting] = useState(false);
 
-    async function load() {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await getPost(id);
-        if (!cancelled) setPost(data);
-      } catch (e) {
-        if (!cancelled) {
-          setError(e instanceof Error ? e.message : 'Не удалось загрузить');
+  useFocusEffect(
+    useCallback(() => {
+      let cancelled = false;
+
+      async function load() {
+        setError(null);
+        try {
+          const data = await getPost(id);
+          if (!cancelled) setPost(data);
+        } catch (e) {
+          if (!cancelled) {
+            setError(e instanceof Error ? e.message : 'Не удалось загрузить');
+          }
+        } finally {
+          if (!cancelled) setLoading(false);
         }
-      } finally {
-        if (!cancelled) setLoading(false);
       }
-    }
 
-    load();
+      load();
 
-    return () => {
-      cancelled = true;
-    };
-  }, [id]);
+      return () => {
+        cancelled = true;
+      };
+    }, [id])
+  );
+
+  function handleDelete() {
+    confirmDelete(async () => {
+      setDeleting(true);
+      try {
+        await deletePost(id);
+        navigation.goBack();
+      } catch (e) {
+        setDeleting(false);
+        const msg = e instanceof Error ? e.message : 'Не удалось удалить';
+        if (Platform.OS === 'web') (globalThis as any).alert(msg);
+        else Alert.alert('Ошибка', msg);
+      }
+    });
+  }
 
   if (loading) {
     return (
@@ -66,6 +98,27 @@ export default function PostViewScreen({ route, navigation }: any) {
         {new Date(post.created_at).toLocaleString('ru-RU')}
       </Text>
       <Text style={styles.content}>{post.content}</Text>
+
+      <View style={styles.actions}>
+        <Pressable
+          style={styles.editButton}
+          onPress={() => navigation.navigate('CreatePost', { post })}
+          disabled={deleting}
+        >
+          <Text style={styles.buttonText}>Редактировать</Text>
+        </Pressable>
+        <Pressable
+          style={[styles.deleteButton, deleting && styles.disabled]}
+          onPress={handleDelete}
+          disabled={deleting}
+        >
+          {deleting ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Удалить</Text>
+          )}
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -94,6 +147,28 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     color: '#333',
+  },
+  actions: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 12,
+  },
+  editButton: {
+    flex: 1,
+    backgroundColor: '#007AFF',
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  deleteButton: {
+    flex: 1,
+    backgroundColor: '#d32f2f',
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  disabled: {
+    opacity: 0.6,
   },
   error: {
     color: '#c00',

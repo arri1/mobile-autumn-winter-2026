@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useLayoutEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,7 +8,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { getPosts, Post } from '../api';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 export default function PostsScreen() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -16,8 +16,8 @@ export default function PostsScreen() {
   const [error, setError] = useState<string | null>(null);
   const navigation = useNavigation<any>();
 
-  async function load() {
-    setLoading(true);
+  async function load(showSpinner = false) {
+    if (showSpinner) setLoading(true);
     setError(null);
     try {
       const data = await getPosts();
@@ -29,9 +29,21 @@ export default function PostsScreen() {
     }
   }
 
-  useEffect(() => {
-    load();
-  }, []);
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable onPress={() => navigation.navigate('CreatePost')}>
+          <Text style={styles.headerButton}>＋ Новый</Text>
+        </Pressable>
+      ),
+    });
+  }, [navigation]);
+
+  useFocusEffect(
+    useCallback(() => {
+      load();
+    }, [])
+  );
 
   if (loading) {
     return (
@@ -46,7 +58,7 @@ export default function PostsScreen() {
     return (
       <View style={styles.center}>
         <Text style={styles.error}>{error}</Text>
-        <Pressable style={styles.button} onPress={load}>
+        <Pressable style={styles.button} onPress={() => load(true)}>
           <Text style={styles.buttonText}>Повторить</Text>
         </Pressable>
       </View>
@@ -77,6 +89,11 @@ export default function PostsScreen() {
 }
 
 const styles = StyleSheet.create({
+  headerButton: {
+    color: '#007AFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
   center: {
     flex: 1,
     justifyContent: 'center',

@@ -9,6 +9,7 @@ import CounterScreen from './src/screens/CounterScreen';
 import TimerScreen from './src/screens/TimerScreen';
 import PostsScreen from './src/screens/PostsScreen';
 import PostViewScreen from './src/screens/PostViewScreen';
+import CreatePostScreen from './src/screens/CreatePostScreen';
 import AboutScreen from './src/screens/AboutScreen';
 
 const Tab = createBottomTabNavigator();
@@ -26,6 +27,13 @@ function PostsStackScreen() {
         name="PostView"
         component={PostViewScreen}
         options={{ title: 'Пост' }}
+      />
+      <PostStack.Screen
+        name="CreatePost"
+        component={CreatePostScreen}
+        options={({ route }: any) => ({
+          title: route.params?.post ? 'Редактирование' : 'Новый пост',
+        })}
       />
     </PostStack.Navigator>
   );

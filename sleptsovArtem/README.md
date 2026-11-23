@@ -26,6 +26,10 @@
 - [x] Просмотр списка постов — PostsScreen (`SPECS/lab-posts.md`)
 - [x] Просмотр одного поста — PostViewScreen (`SPECS/lab-post-view.md`)
 
+### Lab 4
+- [x] Добавление поста - CreatePostScreen
+- [x] Редактирование, удаление поста - по нажатию на пост
+
 ## Пара 2 — материалы
 - Тема: JSX / компоненты, Welcome-экран, Bottom Tabs
 - Что сделано: WelcomeScreen, CounterScreen, AboutScreen, табы
