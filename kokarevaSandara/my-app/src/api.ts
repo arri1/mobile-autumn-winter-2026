@@ -8,6 +8,8 @@ export type Post = {
   updated_at: string;
 };
 
+export type PostPayload = Pick<Post, 'title' | 'content'>; // Тип для создания и обновления (без системных полей id, created_at, updated_at)
+
 export async function getPosts(): Promise<Post[]> {
   const res = await fetch(`${BASE_URL}/posts`);
   if (!res.ok) throw new Error(`Ошибка ${res.status}`);
@@ -18,4 +20,35 @@ export async function getPost(id: number): Promise<Post> {
   const res = await fetch(`${BASE_URL}/posts/${id}`);
   if (!res.ok) throw new Error(`Ошибка ${res.status}`);
   return res.json();
+}
+
+export async function createPost(data: PostPayload): Promise<Post> {
+  const res = await fetch(`${BASE_URL}/posts`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error(`Ошибка ${res.status}`);
+  return res.json();
+}
+
+export async function updatePost(id: number, data: Partial<PostPayload>): Promise<Post> {
+  const res = await fetch(`${BASE_URL}/posts/${id}`, {
+    method: 'PUT', // Если бэкенд принимает частичное обновление, можно заменить на 'PATCH'
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error(`Ошибка ${res.status}`);
+  return res.json();
+}
+
+export async function deletePost(id: number): Promise<void> {
+  const res = await fetch(`${BASE_URL}/posts/${id}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) throw new Error(`Ошибка ${res.status}`);
 }
