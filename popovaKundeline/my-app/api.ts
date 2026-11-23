@@ -8,6 +8,11 @@ export type Post = {
     updated_at: string;
 };
 
+export type PostInput = {
+    title: string;
+    content: string;
+};
+
 export async function getPosts(): Promise<Post[]> {
     const res = await fetch(`${BASE_URL}/posts`);
     if (!res.ok) throw new Error(`Ошибка ${res.status}`);
@@ -18,4 +23,31 @@ export async function getPost(id: number): Promise<Post> {
     const res = await fetch(`${BASE_URL}/posts/${id}`);
     if (!res.ok) throw new Error(`Ошибка ${res.status}`);
     return res.json();
+}
+
+export async function createPost(data: PostInput): Promise<Post> {
+    const res = await fetch(`${BASE_URL}/posts`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error(`Ошибка ${res.status}`);
+    return res.json();
+}
+
+export async function updatePost(id: number, data: PostInput): Promise<Post> {
+    const res = await fetch(`${BASE_URL}/posts/${id}`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error(`Ошибка ${res.status}`);
+    return res.json();
+}
+
+export async function deletePost(id: number): Promise<void> {
+    const res = await fetch(`${BASE_URL}/posts/${id}`, {
+        method: 'DELETE',
+    });
+    if (!res.ok) throw new Error(`Ошибка ${res.status}`);
 }
